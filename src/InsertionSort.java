@@ -1,3 +1,7 @@
+/*
+Độ phức tạp O(n^2)
+ */
+
 import java.util.ArrayList;
 
 public class InsertionSort {    
