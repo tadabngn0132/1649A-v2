@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 public class Admin extends User {
 
-    @Override
-    public void Print(ArrayList<Product> products) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Print'");
+    public Admin(int id, String fullName, String userName, String password, String email, String role) {
+        super(id, fullName, userName, password, email, role);
+        //TODO Auto-generated constructor stub
     }
+
 
 }

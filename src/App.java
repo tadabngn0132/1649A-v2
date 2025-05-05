@@ -7,37 +7,35 @@ public class App {
         if (user == null) {
             System.out.println("Login failed. Exiting application.");
             return;
-        }
-        else if (user instanceof Customer) {
-            customerMenu(user);
-        }else if (user instanceof Employee) {
-            System.out.println("Welcome, " + user.getName() + "!");
+        } else if (user instanceof Customer) {
+            customerMenu((Customer) user);
         } else if (user instanceof Admin) {
-            System.out.println("Unknown user type.");
+            adminMenu((Admin) user);
         }
     }
 
-    public static void customerMenu(User user) {
-        System.out.println("Welcome, " + user.getName() + "!");
+    private static void customerMenu(Customer customer) {
+        System.out.println("Welcome, " + customer.getFullName() + "!");
+        @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
 
         do {
+            System.out.println("====Customer Menu====");
             System.out.println("1. View books");
             System.out.println("2. Add books to cart");
             System.out.println("3. Check out");
             System.out.println("4. View order history");
             System.out.println("0. Logout");
-            System.out.println("Select an option: ");
+            System.out.print("Select an option: ");
             choice = scanner.nextInt();
 
             switch (choice) {
                 case 1:
-                    System.out.println("Displaying products...");
-                    ArrayList<Product> products = ProductManager.getProducts();
-                    user.Print(products);
+                    System.out.println("Displaying books...");
+                    ArrayList<Book> books = BookManager.getBooks();
 
-                    subMenu(user, products);
+                    subMenu(customer, books);
                     
                     break;
                 
@@ -50,7 +48,7 @@ public class App {
                 case 4:
                     break;
 
-                case 5:
+                case 0:
                     break;
 
                 default:
@@ -59,16 +57,18 @@ public class App {
         } while (choice != 0);
     }
 
-    private static void subMenu(User user, ArrayList<Product> products) {
+    private static void subMenu(Customer customer, ArrayList<Book> books) {
+        @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
         do {
+            System.out.println("====View Books====");
             System.out.println("1. Search book by author");
             System.out.println("2. Search book by title");
             System.out.println("3. Sort book by price");
             System.out.println("4. Sort book by title");
             System.out.println("0. Back to main menu");
-            System.out.println("Select an option: ");
+            System.out.print("Select an option: ");
             choice = scanner.nextInt();
             switch (choice) {
                 case 1:
@@ -83,7 +83,8 @@ public class App {
                 case 4:
                     break;
 
-                case 5:
+                case 0:
+                    customerMenu(customer);
                     break;
                 
                 default:
@@ -92,17 +93,52 @@ public class App {
         } while (choice != 0);
     }
 
-    public static void employeeMenu(User user) {
-        System.out.println("Welcome, " + user.getName() + "!");
+    private static void userManagementMenu(Admin admin, ArrayList<User> users) {
+        @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
 
         do {
+            System.out.println("====Manage Users====");
+            System.out.println("1. View all users");
+            System.out.println("2. Add a new user");
+            System.out.println("3. Delete a user");
+            System.out.println("0. Back to main menu");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    break;
+                
+                case 2:
+                    break;
+
+                case 3:
+                    break;
+                
+                case 0:
+                    break;
+
+                default:
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    private static void bookManagementMenu(Admin admin, ArrayList<Book> books) {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+
+        do {
+            System.out.println("====Manage Books====");
             System.out.println("1. View all books");
-            System.out.println("2. Process order");
-            System.out.println("3. Delivery");
-            System.out.println("0. Logout");
-            System.out.println("Select an option: ");
+            System.out.println("2. Add a new book");
+            System.out.println("3. Update a book");
+            System.out.println("4. Delete a book");
+            System.out.println("0. Back to main menu");
+            System.out.print("Select an option: ");
             choice = scanner.nextInt();
 
             switch (choice) {
@@ -118,6 +154,51 @@ public class App {
                 case 4:
                     break;
 
+                case 0:
+                    break;
+
+                default:
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    private static void adminMenu(Admin admin) {
+        System.out.println("Welcome, " + admin.getFullName() + "!");
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+
+        do {
+            System.out.println("====Admin Menu====");
+            System.out.println("1. Manage users");
+            System.out.println("2. Manage books");
+            System.out.println("3. Process order");
+            System.out.println("4. Delivery");
+            System.out.println("0. Logout");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    ArrayList<User> users = UserManager.getUsers();
+                    userManagementMenu(admin, users);
+                    break;
+                
+                case 2:
+                    ArrayList<Book> books = BookManager.getBooks();
+                    bookManagementMenu(admin, books);
+                    break;
+
+                case 3:
+                    break;
+                
+                case 4:
+                    break;
+
+                case 0:
+                    break;
+                
                 default:
                     break;
             }
@@ -125,6 +206,7 @@ public class App {
     }
 
     private static User Login() {
-        return null;
+        User user = new Admin(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Admin");
+        return user;
     }
 }
