@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public abstract class User {
     private int id;
     private String fullName;
@@ -59,4 +61,6 @@ public abstract class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public abstract void Print(ArrayList<Book> books);
 }

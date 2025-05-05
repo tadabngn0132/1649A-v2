@@ -36,6 +36,8 @@ public class App {
                     ArrayList<Book> books = BookManager.getBooks();
 
                     subMenu(customer, books);
+
+                    customer.Print(books);
                     
                     break;
                 
@@ -206,7 +208,7 @@ public class App {
     }
 
     private static User Login() {
-        User user = new Admin(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Admin");
+        User user = new Customer(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Customer");
         return user;
     }
 }

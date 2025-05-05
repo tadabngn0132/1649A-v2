@@ -81,4 +81,25 @@ public class BinarySearch {
         // Không tìm thấy
         return -1;
     }
+
+    public int searchOrderById(ArrayList<Order> orders, int id) {
+        int left = 0;
+        int right = orders.size() - 1;
+
+        while(left <= right) {
+            int mid = (left + right) / 2;
+
+            if (orders.get(mid).getId() == id) {
+                return mid;
+            }
+
+            if (orders.get(mid).getId() < id) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return -1;
+    }
 }
