@@ -8,7 +8,7 @@ public class InsertionSort {
     public ArrayList<Book> sortByTitle(ArrayList<Book> books, boolean asc) {
         int n = books.size();
         ArrayList<Book> sorted = new ArrayList<>(books);
-        for( int i = 1; i < n; i++) {
+        for (int i = 1; i < n; i++) {
             int k = i;
             for (int j = i - 1; j >= 0; j--) {
                 if((asc && sorted.get(k).getTitle().compareTo(sorted.get(j).getTitle()) < 0) || 
@@ -21,11 +21,28 @@ public class InsertionSort {
         }
         return sorted; 
     }
+
+    public ArrayList<Book> sortByAuthor(ArrayList<Book> books, boolean asc) {
+        int n = books.size();
+        ArrayList<Book> sorted = new ArrayList<>(books);
+        for (int i = 1; i < n; i++) {
+            int k = i;
+            for (int j = i - 1; j >= 0; j--) {
+                if((asc && sorted.get(k).getAuthor().compareTo(sorted.get(j).getAuthor()) < 0) || 
+                    (!asc && sorted.get(k).getAuthor().compareTo(sorted.get(j).getAuthor()) > 0)) {
+                    swap(sorted, k, j);
+                    k = j;
+                } else 
+                    break;
+            }
+        }
+        return sorted;
+    }
     
     public ArrayList<Book> sortByPrice(ArrayList<Book> books, boolean asc) {
         int n = books.size();
         ArrayList<Book> sorted = new ArrayList<>(books);
-        for( int i = 1; i < n; i++) {
+        for (int i = 1; i < n; i++) {
             int k = i;
             for (int j = i - 1; j >= 0; j--) {
                 if((asc && sorted.get(k).getPrice() < sorted.get(j).getPrice()) || 

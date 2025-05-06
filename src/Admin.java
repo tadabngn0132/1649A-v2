@@ -9,9 +9,9 @@ public class Admin extends User {
 
     @Override
     public void Print(ArrayList<Book> books) {
-        System.out.printf("%-25s %-10.2f %-10d\n", "Id", "Title", "Author", "Price", "Quantity");
+        System.out.printf("%-5s %-50s %-25s %-10s %-10s\n", "Id", "Title", "Author", "Price", "Quantity");
         for (Book book : books) {
-            System.out.printf("%-25s %-10.2f %-10d\n", book.getId(), book.getTitle(), book.getAuthor(), book.getPrice(), book.getQuantity());
+            System.out.printf("%-5s %-50s %-25s %-10.2f %-10d\n", book.getId(), book.getTitle(), book.getAuthor(), book.getPrice(), book.getQuantity());
         }
     }
 

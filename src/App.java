@@ -34,10 +34,14 @@ public class App {
                 case 1:
                     System.out.println("Displaying books...");
                     ArrayList<Book> books = BookManager.getBooks();
+                    
+                    if (books != null && !books.isEmpty()) {
+                        customer.Print(books);
+                    } else {
+                        System.out.println("There are no books to display.");
+                    }
 
                     subMenu(customer, books);
-
-                    customer.Print(books);
                     
                     break;
                 
@@ -64,7 +68,7 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
         do {
-            System.out.println("====View Books====");
+            System.out.println();
             System.out.println("1. Search book by author");
             System.out.println("2. Search book by title");
             System.out.println("3. Sort book by price");
@@ -72,17 +76,67 @@ public class App {
             System.out.println("0. Back to main menu");
             System.out.print("Select an option: ");
             choice = scanner.nextInt();
+            ArrayList<Book> sortedBooks;
+            ArrayList<Book> searchedBooks;
+            int idx = 0;
+            BinarySearch searcher = new BinarySearch();
+            InsertionSort sorter = new InsertionSort();
             switch (choice) {
                 case 1:
+                    Scanner scanner1 = new Scanner(System.in);
+
+                    System.out.print("Enter author name to search: ");
+                    String author = scanner1.nextLine();
+
+                    sortedBooks = sorter.sortByAuthor(books, true);
+
+                    // idx = searcher.searchByAuthor(sortedBooks, author);
+
+                    // if (idx != -1) {
+                    //     System.out.println("Found: " + sortedBooks.get(idx).getTitle() + ", author: " + sortedBooks.get(idx).getAuthor()
+                    //                     + ", price: " + sortedBooks.get(idx).getPrice());
+                    // } else {
+                    //     System.out.println("Not found any book of " + author + "!");
+                    // }
+
+                    searchedBooks = searcher.searchBooksByAuthorName(sortedBooks, author);
+
+                    if (searchedBooks.size() != 0) {
+                        customer.Print(searchedBooks);
+                    } else {
+                        System.out.println("Not found any book of " + author + "!");
+                    }
+
                     break;
             
                 case 2:
+                    Scanner scanner2 = new Scanner(System.in);
+
+                    System.out.print("Enter book title to search: ");
+                    String title = scanner2.nextLine();
+
+                    sortedBooks = sorter.sortByTitle(books, true);
+
+                    idx = searcher.searchByTitle(sortedBooks, title);
+
+                    if (idx != -1) {
+                        System.out.println("Found: " + sortedBooks.get(idx).getTitle() + ", author: " + sortedBooks.get(idx).getAuthor()
+                                        + ", price: " + sortedBooks.get(idx).getPrice());
+                    } else {
+                        System.out.println("Not found any book with the title " + title + "!");
+                    }
                     break;
             
                 case 3:
+                    sortedBooks = sorter.sortByPrice(books, true);
+                    customer.Print(sortedBooks);
+                    System.out.println();
                     break;
 
                 case 4:
+                    sortedBooks = sorter.sortByTitle(books, true);
+                    customer.Print(sortedBooks);
+                    System.out.println();
                     break;
 
                 case 0:

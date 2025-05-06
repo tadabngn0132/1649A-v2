@@ -82,6 +82,42 @@ public class BinarySearch {
         return -1;
     }
 
+    public ArrayList<Book> searchBooksByAuthorName(ArrayList<Book> books, String author) {
+        int left;
+        int right;
+        ArrayList<Book> searchedBooks = new ArrayList<>();
+
+        int idx = searchByAuthor(books, author);
+
+        if (idx == -1) {
+            return searchedBooks;
+        } else {
+            searchedBooks.add(books.get(idx));
+
+            right = idx + 1;
+            while (right < books.size()) {
+                if (books.get(right).getAuthor().compareTo(author) == 0) {
+                    searchedBooks.add(books.get(right));
+                    right++;
+                } else {
+                    right++;
+                }
+            }
+
+            left = idx - 1;
+            while (left >= 0) {
+                if (books.get(left).getAuthor().compareTo(author) == 0) {
+                    searchedBooks.add(books.get(left));
+                    left--;
+                } else {
+                    left--;
+                }
+            }
+
+            return searchedBooks;
+        }
+    }
+
     public int searchOrderById(ArrayList<Order> orders, int id) {
         int left = 0;
         int right = orders.size() - 1;
