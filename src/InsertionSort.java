@@ -55,6 +55,23 @@ public class InsertionSort {
         }
         return sorted; 
     }
+
+    public ArrayList<Book> sortById(ArrayList<Book> books, boolean asc) {
+        int n = books.size();
+        ArrayList<Book> sorted = new ArrayList<>(books);
+        for (int i = 1; i < n; i++) {
+            int k = i;
+            for (int j = i - 1; j >= 0; j--) {
+                if((asc && sorted.get(k).getId() < sorted.get(j).getId()) || 
+                    (!asc && sorted.get(k).getId() > sorted.get(j).getId())) {
+                    swap(sorted, k, j);
+                    k = j;
+                } else 
+                    break;
+            }
+        }
+        return sorted; 
+    }
     
     protected static void swap(ArrayList<Book> books, int i, int j) {
         Book temp = books.get(i);

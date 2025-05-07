@@ -24,19 +24,24 @@ public class App {
             System.out.println("====Customer Menu====");
             System.out.println("1. View books");
             System.out.println("2. Add books to cart");
-            System.out.println("3. Check out");
-            System.out.println("4. View order history");
+            System.out.println("3. View cart");
+            System.out.println("4. Check out");
+            System.out.println("5. View order history");
             System.out.println("0. Logout");
             System.out.print("Select an option: ");
             choice = scanner.nextInt();
-
+            boolean addingBooks = true;
+            ArrayList<Book> sortedBooks;
+            InsertionSort sorter = new InsertionSort();
             switch (choice) {
                 case 1:
                     System.out.println("Displaying books...");
                     ArrayList<Book> books = BookManager.getBooks();
+
+                    sortedBooks = sorter.sortById(books, true);
                     
                     if (books != null && !books.isEmpty()) {
-                        customer.Print(books);
+                        customer.Print(sortedBooks);
                     } else {
                         System.out.println("There are no books to display.");
                     }
@@ -46,12 +51,136 @@ public class App {
                     break;
                 
                 case 2:
+                    System.out.println("Add Books to Cart...");
+
+                    if (customer.getCart() == null) {
+                        customer.setCart(new Cart());
+                    }
+
+                    while (addingBooks) {
+                        System.out.println();
+                        System.out.println("Available books:");
+                        @SuppressWarnings("resource")
+                        Scanner scanner1 = new Scanner(System.in);
+                        ArrayList<Book> availableBooks = BookManager.getBooks();
+                        
+                        if (availableBooks != null && !availableBooks.isEmpty()) {
+                            customer.Print(availableBooks);
+                        } else {
+                            System.out.println("There are no books to display.");
+                        }
+
+                        System.out.println();
+                        System.out.print("Enter book title to add to cart: ");
+                        int bookId = scanner.nextInt();
+
+                        if (bookId <= 0) {
+                            addingBooks = false;
+                        } else {
+                            Book selectedBook = null;
+                            for (Book book : availableBooks) {
+                                if (book.getId() == bookId) {
+                                    selectedBook = book;
+                                    break;
+                                }
+                            }
+
+                            if (selectedBook != null) {
+                                System.out.print("Enter quantity: ");
+                                int quantity = scanner1.nextInt();
+
+                                if (quantity <= selectedBook.getQuantity()) {
+                                    Book cartItem = new Book(
+                                        selectedBook.getId(), 
+                                        selectedBook.getTitle(), 
+                                        selectedBook.getAuthor(), 
+                                        selectedBook.getPrice(), 
+                                        quantity
+                                    );
+
+                                    customer.getCart().addItem(cartItem);
+                                    System.out.println("Add to cart successfully");
+                                } else {
+                                    System.out.println("There are only " + quantity + " books in stock.");
+                                }
+                            } else {
+                                System.out.println("Not found!");
+                            }
+
+                            System.out.print("Do you want to add more (yes/no): ");
+                            @SuppressWarnings("resource")
+                            Scanner scanner2 = new Scanner(System.in);
+
+                            String answer = scanner2.nextLine();
+
+                            String lowerCaseAnswer = answer.toLowerCase();
+
+                            if (lowerCaseAnswer.compareTo("yes") == 0 || lowerCaseAnswer.compareTo("y") == 0) {
+                                addingBooks = true;
+                            } else {
+                                addingBooks = false;
+                            }
+                        }
+                    }
+
                     break;
 
                 case 3:
+                    if (customer.getCart().isEmpty()) {
+                        System.out.println("Cart is empty");
+                    } else {
+                        customer.PrintCart(customer);
+                    }
                     break;
                 
                 case 4:
+                    if (customer.getCart() == null || customer.getCart().isEmpty()) {
+                        System.out.println("Your cart is empty! Please add books first.");
+                        break;
+                    }
+                    
+                    System.out.println("\n===Checkout===");
+                    System.out.println("Items in your cart:");
+                    
+                    for (Book item : customer.getCart().getItems()) {
+                        System.out.printf("%-25s %-15s $%.2f x %d = $%.2f\n", 
+                            item.getTitle(), item.getAuthor(), 
+                            item.getPrice(), item.getQuantity(), 
+                            item.getPrice() * item.getQuantity());
+                    }
+                    
+                    System.out.println("\nTotal: $" + String.format("%.2f", customer.getCart().getTotalPrice()));
+                    
+                    scanner.nextLine(); // Xử lý ký tự xuống dòng còn lại
+                    System.out.print("Enter shipping address: ");
+                    String shippingAddress = scanner.nextLine();
+                    
+                    int nextOrderId = 0;
+                    // Tạo đơn hàng mới
+                    Order newOrder = new Order(nextOrderId++, customer.getFullName(), shippingAddress);
+                    newOrder.setBooks(new ArrayList<>(customer.getCart().getItems()));
+                    
+                    // Thêm đơn hàng vào hệ thống
+                    OrderManager.getPendingOrders().enqueue(newOrder);
+                    OrderManager.getAllOrders().add(newOrder);
+                    
+                    System.out.println("Order created successfully! Order ID: " + newOrder.getId());
+                    
+                    // Cập nhật số lượng sách trong kho
+                    for (Book cartItem : customer.getCart().getItems()) {
+                        for (Book inventoryBook : BookManager.getBooks()) {
+                            if (inventoryBook.getId() == cartItem.getId()) {
+                                inventoryBook.setQuantity(inventoryBook.getQuantity() - cartItem.getQuantity());
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Xóa giỏ hàng sau khi đặt hàng
+                    customer.getCart().clear();
+                    break;
+
+                case 5:
                     break;
 
                 case 0:
@@ -121,7 +250,7 @@ public class App {
 
                     if (idx != -1) {
                         System.out.println("Found: " + sortedBooks.get(idx).getTitle() + ", author: " + sortedBooks.get(idx).getAuthor()
-                                        + ", price: " + sortedBooks.get(idx).getPrice());
+                                        + ", price: $" + sortedBooks.get(idx).getPrice());
                     } else {
                         System.out.println("Not found any book with the title " + title + "!");
                     }
