@@ -13,13 +13,11 @@ public class UserManager {
 
         if (users == null) {
             users = new ArrayList<>();
-            users.add(new Admin(1, "Nguyễn Văn A", "nguyenvana", "password123", "nguyenvana@example.com", "admin"));
-            users.add(new Customer(2, "Trần Thị B", "tranthib", "abc@123", "tranthib@example.com", "customer"));
-            users.add(new Customer(3, "Lê Văn C", "levanc", "securepass", "levanc@example.com", "customer"));
-            users.add(new Customer(4, "Phạm Thị D", "phamthid", "mypassword", "phamthid@example.com", "customer"));
-            users.add(new Admin(5, "Hoàng Văn E", "hoangvane", "123456", "hoangvane@example.com", "admin"));
-            users.add(new Customer(6, "Nguyen Ba Dat", "btad0132", "Datngba2310@", "datngba2310@gmail.com", "customer"));
-            users.add(new Admin(7, "Dat Nguyen Ba", "datngba2310", "Datngba2310@", "datnbgdh220895@gmail.com", "admin"));
+            users.add(new User(1, "Dat Nguyen Ba", "datngba2310", "Datngba2310@", "datnbgdh220895@gmail.com"));
+            users.add(new User(2, "Trần Thị B", "tranthib", "abc@123", "tranthib@example.com"));
+            users.add(new User(3, "Lê Văn C", "levanc", "securepass", "levanc@example.com"));
+            users.add(new User(4, "Phạm Thị D", "phamthid", "mypassword", "phamthid@example.com"));
+            users.add(new User(5, "Nguyen Ba Dat", "btad0132", "Datngba2310@", "datngba2310@gmail.com"));
         }
         return users;
     }
