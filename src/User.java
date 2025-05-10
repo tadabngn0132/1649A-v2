@@ -63,4 +63,5 @@ public abstract class User {
     }
 
     public abstract void Print(ArrayList<Book> books);
+    public abstract void PrintOrder(ArrayList<Order> orders);
 }

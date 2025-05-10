@@ -18,6 +18,8 @@ public class UserManager {
             users.add(new Customer(3, "Lê Văn C", "levanc", "securepass", "levanc@example.com", "customer"));
             users.add(new Customer(4, "Phạm Thị D", "phamthid", "mypassword", "phamthid@example.com", "customer"));
             users.add(new Admin(5, "Hoàng Văn E", "hoangvane", "123456", "hoangvane@example.com", "admin"));
+            users.add(new Customer(6, "Nguyen Ba Dat", "btad0132", "Datngba2310@", "datngba2310@gmail.com", "customer"));
+            users.add(new Admin(7, "Dat Nguyen Ba", "datngba2310", "Datngba2310@", "datnbgdh220895@gmail.com", "admin"));
         }
         return users;
     }

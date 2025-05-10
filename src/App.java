@@ -15,6 +15,7 @@ public class App {
     }
 
     private static void customerMenu(Customer customer) {
+        System.out.println();
         System.out.println("Welcome, " + customer.getFullName() + "!");
         @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
@@ -47,7 +48,6 @@ public class App {
                     }
 
                     subMenu(customer, books);
-                    
                     break;
                 
                 case 2:
@@ -122,7 +122,6 @@ public class App {
                             }
                         }
                     }
-
                     break;
 
                 case 3:
@@ -134,26 +133,20 @@ public class App {
                     break;
                 
                 case 4:
+                    Scanner scanner1 = new Scanner(System.in);
                     if (customer.getCart() == null || customer.getCart().isEmpty()) {
-                        System.out.println("Your cart is empty! Please add books first.");
+                        System.out.println("Cart is empty! Please add books first.");
                         break;
                     }
                     
-                    System.out.println("\n===Checkout===");
+                    System.out.println();
+                    System.out.println("===Checkout===");
                     System.out.println("Items in your cart:");
                     
-                    for (Book item : customer.getCart().getItems()) {
-                        System.out.printf("%-25s %-15s $%.2f x %d = $%.2f\n", 
-                            item.getTitle(), item.getAuthor(), 
-                            item.getPrice(), item.getQuantity(), 
-                            item.getPrice() * item.getQuantity());
-                    }
+                    customer.PrintCart(customer);
                     
-                    System.out.println("\nTotal: $" + String.format("%.2f", customer.getCart().getTotalPrice()));
-                    
-                    scanner.nextLine(); // Xử lý ký tự xuống dòng còn lại
                     System.out.print("Enter shipping address: ");
-                    String shippingAddress = scanner.nextLine();
+                    String shippingAddress = scanner1.nextLine();
                     
                     int nextOrderId = 0;
                     // Tạo đơn hàng mới
@@ -181,6 +174,32 @@ public class App {
                     break;
 
                 case 5:
+                    ArrayList<Order> orderHistory = OrderManager.getOrdersByCustomer(customer.getFullName());
+                    customer.PrintOrder(orderHistory);
+                    
+                    if (!orderHistory.isEmpty()) {
+                        System.out.print("\nEnter order ID to view details (0 to cancel): ");
+                        int orderId = scanner.nextInt();
+                        
+                        if (orderId > 0) {
+                            // Tìm đơn hàng theo ID
+                            Order selectedOrder = null;
+                            for (Order order : orderHistory) {
+                                if (order.getId() == orderId) {
+                                    selectedOrder = order;
+                                    break;
+                                }
+                            }
+                            
+                            if (selectedOrder != null) {
+                                // In chi tiết đơn hàng bằng phương thức PrintOrderDetail
+                                customer.PrintOrderDetail(selectedOrder);
+                            } else {
+                                System.out.println("Order not found or you don't have permission to view it.");
+                            }
+                        }
+                    }
+
                     break;
 
                 case 0:
@@ -391,6 +410,28 @@ public class App {
     }
 
     private static User Login() {
+        // @SuppressWarnings("resource")
+        // Scanner scanner = new Scanner(System.in);
+        // ArrayList<User> users = UserManager.getUsers();
+
+        // System.out.println("====Online Bookstore====");
+        // System.out.println("====Login====");
+        // System.out.println();
+        // System.out.print("Username: ");
+        // String userName = scanner.nextLine();
+        
+        // System.out.print("Password: ");
+        // String password = scanner.nextLine();
+
+        // for (User user : users) {
+        //     if (user.getUserName().compareTo(userName) == 0 && user.getPassword().compareTo(password) == 0) {
+        //         return user;
+        //     }
+        // }
+
+        // System.out.println("Invalid username or password.");
+        // return null;
+        
         User user = new Customer(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Customer");
         return user;
     }
