@@ -7,14 +7,16 @@ public class App {
         if (user == null) {
             System.out.println("Login failed. Exiting application.");
             return;
-        } else {
-            customerMenu(user);
+        } else if (user instanceof Customer) {
+            customerMenu((Customer) user);
+        } else if (user instanceof Admin) {
+            adminMenu((Admin) user);
         }
     }
 
-    private static void customerMenu(User user) {
+    private static void customerMenu(Customer customer) {
         System.out.println();
-        System.out.println("Welcome, " + user.getFullName() + "!");
+        System.out.println("Welcome, " + customer.getFullName() + "!");
         @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
@@ -40,19 +42,19 @@ public class App {
                     sortedBooks = sorter.sortById(books, true);
                     
                     if (books != null && !books.isEmpty()) {
-                        user.Print(sortedBooks);
+                        customer.Print(sortedBooks);
                     } else {
                         System.out.println("There are no books to display.");
                     }
 
-                    subMenu(user, books);
+                    subMenu(customer, books);
                     break;
                 
                 case 2:
                     System.out.println("Add Books to Cart...");
 
-                    if (user.getCart() == null) {
-                        user.setCart(new Cart());
+                    if (customer.getCart() == null) {
+                        customer.setCart(new Cart());
                     }
 
                     while (addingBooks) {
@@ -63,7 +65,7 @@ public class App {
                         ArrayList<Book> availableBooks = BookManager.getBooks();
                         
                         if (availableBooks != null && !availableBooks.isEmpty()) {
-                            user.Print(availableBooks);
+                            customer.Print(availableBooks);
                         } else {
                             System.out.println("There are no books to display.");
                         }
@@ -96,7 +98,7 @@ public class App {
                                         quantity
                                     );
 
-                                    user.getCart().addItem(cartItem);
+                                    customer.getCart().addItem(cartItem);
                                     System.out.println("Add to cart successfully");
                                 } else {
                                     System.out.println("There are only " + quantity + " books in stock.");
@@ -123,16 +125,16 @@ public class App {
                     break;
 
                 case 3:
-                    if (user.getCart().isEmpty()) {
+                    if (customer.getCart().isEmpty()) {
                         System.out.println("Cart is empty");
                     } else {
-                        user.PrintCart(user);
+                        customer.PrintCart(customer);
                     }
                     break;
                 
                 case 4:
                     Scanner scanner1 = new Scanner(System.in);
-                    if (user.getCart() == null || user.getCart().isEmpty()) {
+                    if (customer.getCart() == null || customer.getCart().isEmpty()) {
                         System.out.println("Cart is empty! Please add books first.");
                         break;
                     }
@@ -141,15 +143,15 @@ public class App {
                     System.out.println("===Checkout===");
                     System.out.println("Items in your cart:");
                     
-                    user.PrintCart(user);
+                    customer.PrintCart(customer);
                     
                     System.out.print("Enter shipping address: ");
                     String shippingAddress = scanner1.nextLine();
                     
                     int nextOrderId = 0;
                     // Tạo đơn hàng mới
-                    Order newOrder = new Order(nextOrderId++, user.getFullName(), shippingAddress);
-                    newOrder.setBooks(new ArrayList<>(user.getCart().getItems()));
+                    Order newOrder = new Order(nextOrderId++, customer.getFullName(), shippingAddress);
+                    newOrder.setBooks(new ArrayList<>(customer.getCart().getItems()));
                     
                     // Thêm đơn hàng vào hệ thống
                     OrderManager.getPendingOrders().enqueue(newOrder);
@@ -158,7 +160,7 @@ public class App {
                     System.out.println("Order created successfully! Order ID: " + newOrder.getId());
                     
                     // Cập nhật số lượng sách trong kho
-                    for (Book cartItem : user.getCart().getItems()) {
+                    for (Book cartItem : customer.getCart().getItems()) {
                         for (Book inventoryBook : BookManager.getBooks()) {
                             if (inventoryBook.getId() == cartItem.getId()) {
                                 inventoryBook.setQuantity(inventoryBook.getQuantity() - cartItem.getQuantity());
@@ -168,12 +170,12 @@ public class App {
                     }
                     
                     // Xóa giỏ hàng sau khi đặt hàng
-                    user.getCart().clear();
+                    customer.getCart().clear();
                     break;
 
                 case 5:
-                    ArrayList<Order> orderHistory = OrderManager.getOrdersByCustomer(user.getFullName());
-                    user.PrintOrder(orderHistory);
+                    ArrayList<Order> orderHistory = OrderManager.getOrdersByCustomer(customer.getFullName());
+                    customer.PrintOrder(orderHistory);
                     
                     if (!orderHistory.isEmpty()) {
                         System.out.print("\nEnter order ID to view details (0 to cancel): ");
@@ -191,7 +193,7 @@ public class App {
                             
                             if (selectedOrder != null) {
                                 // In chi tiết đơn hàng bằng phương thức PrintOrderDetail
-                                user.PrintOrderDetail(selectedOrder);
+                                customer.PrintOrderDetail(selectedOrder);
                             } else {
                                 System.out.println("Order not found or you don't have permission to view it.");
                             }
@@ -209,7 +211,7 @@ public class App {
         } while (choice != 0);
     }
 
-    private static void subMenu(User user, ArrayList<Book> books) {
+    private static void subMenu(Customer customer, ArrayList<Book> books) {
         @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
@@ -248,7 +250,7 @@ public class App {
                     searchedBooks = searcher.searchBooksByAuthorName(sortedBooks, author);
 
                     if (searchedBooks.size() != 0) {
-                        user.Print(searchedBooks);
+                        customer.Print(searchedBooks);
                     } else {
                         System.out.println("Not found any book of " + author + "!");
                     }
@@ -275,18 +277,130 @@ public class App {
             
                 case 3:
                     sortedBooks = sorter.sortByPrice(books, true);
-                    user.Print(sortedBooks);
+                    customer.Print(sortedBooks);
                     System.out.println();
                     break;
 
                 case 4:
                     sortedBooks = sorter.sortByTitle(books, true);
-                    user.Print(sortedBooks);
+                    customer.Print(sortedBooks);
                     System.out.println();
                     break;
 
                 case 0:
-                    customerMenu(user);
+                    customerMenu(customer);
+                    break;
+                
+                default:
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    private static void userManagementMenu(Admin admin, ArrayList<User> users) {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+
+        do {
+            System.out.println("====Manage Users====");
+            System.out.println("1. View all users");
+            System.out.println("2. Add a new user");
+            System.out.println("3. Delete a user");
+            System.out.println("0. Back to main menu");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    break;
+                
+                case 2:
+                    break;
+
+                case 3:
+                    break;
+                
+                case 0:
+                    break;
+
+                default:
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    private static void bookManagementMenu(Admin admin, ArrayList<Book> books) {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+
+        do {
+            System.out.println("====Manage Books====");
+            System.out.println("1. View all books");
+            System.out.println("2. Add a new book");
+            System.out.println("3. Update a book");
+            System.out.println("4. Delete a book");
+            System.out.println("0. Back to main menu");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    break;
+                
+                case 2:
+                    break;
+
+                case 3:
+                    break;
+                
+                case 4:
+                    break;
+
+                case 0:
+                    break;
+
+                default:
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    private static void adminMenu(Admin admin) {
+        System.out.println("Welcome, " + admin.getFullName() + "!");
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+
+        do {
+            System.out.println("====Admin Menu====");
+            System.out.println("1. Manage users");
+            System.out.println("2. Manage books");
+            System.out.println("3. Process order");
+            System.out.println("4. Delivery");
+            System.out.println("0. Logout");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    ArrayList<User> users = UserManager.getUsers();
+                    userManagementMenu(admin, users);
+                    break;
+                
+                case 2:
+                    ArrayList<Book> books = BookManager.getBooks();
+                    bookManagementMenu(admin, books);
+                    break;
+
+                case 3:
+                    break;
+                
+                case 4:
+                    break;
+
+                case 0:
                     break;
                 
                 default:
@@ -316,9 +430,17 @@ public class App {
         // }
 
         // System.out.println("Invalid username or password.");
+
+        // System.out.print("Try again? (yes/no): ");
+        // String retry = scanner.nextLine();
+        // String retryLowerCase = retry.toLowerCase();
+        // if (retryLowerCase.compareTo("yes") == 0 || retryLowerCase.compareTo("y") == 0) {
+        //     return Login();
+        // }
+
         // return null;
         
-        User user = new User(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com");
+        User user = new Customer(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Customer");
         return user;
     }
 }
