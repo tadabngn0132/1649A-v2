@@ -377,8 +377,7 @@ public class App {
             System.out.println("====Admin Menu====");
             System.out.println("1. Manage users");
             System.out.println("2. Manage books");
-            System.out.println("3. Process order");
-            System.out.println("4. Delivery");
+            System.out.println("3. Process orders");
             System.out.println("0. Logout");
             System.out.print("Select an option: ");
             choice = scanner.nextInt();
@@ -395,9 +394,8 @@ public class App {
                     break;
 
                 case 3:
-                    break;
-                
-                case 4:
+                    // Implement order processing here
+                    orderProcessingMenu(admin);
                     break;
 
                 case 0:
@@ -407,6 +405,182 @@ public class App {
                     break;
             }
         } while (choice != 0);
+    }
+
+    private static void orderProcessingMenu(Admin admin) {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+
+        do {
+            System.out.println("\n====Order Processing Menu====");
+            System.out.println("1. View pending orders");
+            System.out.println("2. View processing orders");
+            System.out.println("3. View completed orders");
+            System.out.println("4. View all orders");
+            System.out.println("5. Process next pending order");
+            System.out.println("6. Complete processed order");
+            System.out.println("7. Cancel an order");
+            System.out.println("8. View order details");
+            System.out.println("0. Back to main menu");
+            System.out.print("Select an option: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    displayQueueOrders(OrderManager.getPendingOrders(), "Pending");
+                    break;
+                
+                case 2:
+                    displayQueueOrders(OrderManager.getProcessingOrders(), "Processing");
+                    break;
+
+                case 3:
+                    displayQueueOrders(OrderManager.getCompletedOrders(), "Completed");
+                    break;
+                    
+                case 4:
+                    displayAllOrders(admin);
+                    break;
+                    
+                case 5:
+                    processNextPendingOrder();
+                    break;
+                    
+                case 6:
+                    completeProcessedOrder();
+                    break;
+                    
+                case 7:
+                    cancelOrder();
+                    break;
+                    
+                case 8:
+                    viewOrderDetails(admin);
+                    break;
+                    
+                case 0:
+                    break;
+                    
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                    break;
+            }
+        } while (choice != 0);
+    }
+
+    private static void displayQueueOrders(LinkedListBasedQueue<Order> orderQueue, String status) {
+        if (orderQueue.isEmpty()) {
+            System.out.println("No " + status + " orders.");
+            return;
+        }
+        
+        System.out.println("\n===== " + status + " Orders =====");
+        
+        // Create a temporary queue to avoid losing data
+        LinkedListBasedQueue<Order> tempQueue = new LinkedListBasedQueue<>();
+        
+        System.out.printf("| %-5s | %-25s | %-25s | %-10s |\n", 
+                "ID", "Customer Name", "Shipping Address", "Book Count");
+        System.out.println("|-------|---------------------------|---------------------------|------------|");
+        
+        while (!orderQueue.isEmpty()) {
+            Order order = orderQueue.dequeue();
+            
+            System.out.printf("| %-5d | %-25s | %-25s | %-10d |\n", 
+                    order.getId(), 
+                    truncateString(order.getCustomerName(), 25),
+                    truncateString(order.getShippingAddress(), 25), 
+                    order.getBooks().size());
+            
+            // Add to temporary queue
+            tempQueue.enqueue(order);
+        }
+        
+        // Restore original queue
+        while (!tempQueue.isEmpty()) {
+            orderQueue.enqueue(tempQueue.dequeue());
+        }
+        
+        System.out.println("==============================");
+    }
+
+    private static void displayAllOrders(Admin admin) {
+        ArrayList<Order> allOrders = OrderManager.getAllOrders();
+        
+        if (allOrders.isEmpty()) {
+            System.out.println("No orders available.");
+            return;
+        }
+        
+        admin.PrintOrder(allOrders);
+    }
+
+    private static void processNextPendingOrder() {
+        if (OrderManager.getPendingOrders().isEmpty()) {
+            System.out.println("No pending orders to process.");
+            return;
+        }
+        
+        Order processedOrder = OrderManager.processOrder();
+        if (processedOrder != null) {
+            System.out.println("Successfully processed Order #" + processedOrder.getId() + " for " + processedOrder.getCustomerName());
+        }
+    }
+
+    private static void completeProcessedOrder() {
+        if (OrderManager.getProcessingOrders().isEmpty()) {
+            System.out.println("No processing orders to complete.");
+            return;
+        }
+        
+        Order completedOrder = OrderManager.completeOrder();
+        if (completedOrder != null) {
+            System.out.println("Successfully completed Order #" + completedOrder.getId() + " for " + completedOrder.getCustomerName());
+        }
+    }
+
+    private static void cancelOrder() {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter the order ID to cancel: ");
+        int orderId = scanner.nextInt();
+        
+        boolean success = OrderManager.cancelOrder(orderId);
+        if (success) {
+            System.out.println("Order #" + orderId + " has been successfully cancelled.");
+        } else {
+            System.out.println("Failed to cancel order. Order might not exist or already be completed.");
+        }
+    }
+
+    private static void viewOrderDetails(Admin admin) {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter the order ID to view details: ");
+        int orderId = scanner.nextInt();
+        
+        Order order = OrderManager.findOrderById(orderId);
+        if (order != null) {
+            admin.PrintOrderDetail(order);
+        } else {
+            System.out.println("Order not found.");
+        }
+    }
+
+    // Helper method to truncate long strings for display
+    private static String truncateString(String input, int maxLength) {
+        if (input == null) {
+            return "";
+        }
+        
+        if (input.length() <= maxLength) {
+            return input;
+        }
+        
+        return input.substring(0, maxLength - 3) + "...";
     }
 
     private static User Login() {
