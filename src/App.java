@@ -3,14 +3,18 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        User user = Login();
-        if (user == null) {
-            System.out.println("Login failed. Exiting application.");
-            return;
-        } else if (user instanceof Customer) {
-            customerMenu((Customer) user);
-        } else if (user instanceof Admin) {
-            adminMenu((Admin) user);
+        boolean running = true;
+        
+        while (running) {
+            User user = Login();
+            if (user == null) {
+                System.out.println("Login failed. Exiting application.");
+                running = false;
+            } else if (user instanceof Customer) {
+                customerMenu((Customer) user);
+            } else if (user instanceof Admin) {
+                adminMenu((Admin) user);
+            }
         }
     }
 
@@ -148,7 +152,7 @@ public class App {
                     System.out.print("Enter shipping address: ");
                     String shippingAddress = scanner1.nextLine();
                     
-                    int nextOrderId = 0;
+                    int nextOrderId = 1;
                     // Tạo đơn hàng mới
                     Order newOrder = new Order(nextOrderId++, customer.getFullName(), shippingAddress);
                     newOrder.setBooks(new ArrayList<>(customer.getCart().getItems()));
@@ -203,7 +207,10 @@ public class App {
                     break;
 
                 case 0:
-                    break;
+                    System.out.println("Logging out...");
+                    System.out.println("Thank you for using the Online Bookstore System, " + customer.getFullName() + "!");
+                    System.out.println("You have been successfully logged out.");
+                    return;
 
                 default:
                     break;
@@ -460,7 +467,10 @@ public class App {
                     break;
                     
                 case 0:
-                    break;
+                    System.out.println("Logging out...");
+                    System.out.println("Thank you for using the Online Bookstore System, " + admin.getFullName() + "!");
+                    System.out.println("You have been successfully logged out.");
+                    return;
                     
                 default:
                     System.out.println("Invalid option. Please try again.");
@@ -584,37 +594,35 @@ public class App {
     }
 
     private static User Login() {
-        // @SuppressWarnings("resource")
-        // Scanner scanner = new Scanner(System.in);
-        // ArrayList<User> users = UserManager.getUsers();
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<User> users = UserManager.getUsers();
 
-        // System.out.println("====Online Bookstore====");
-        // System.out.println("====Login====");
-        // System.out.println();
-        // System.out.print("Username: ");
-        // String userName = scanner.nextLine();
+        System.out.println("====Online Bookstore====");
+        System.out.println("====Login====");
+        System.out.println();
+        System.out.print("Username: ");
+        String userName = scanner.nextLine();
         
-        // System.out.print("Password: ");
-        // String password = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
 
-        // for (User user : users) {
-        //     if (user.getUserName().compareTo(userName) == 0 && user.getPassword().compareTo(password) == 0) {
-        //         return user;
-        //     }
-        // }
+        for (User user : users) {
+            if (user.getUserName().compareTo(userName) == 0 && user.getPassword().compareTo(password) == 0) {
+                return user;
+            }
+        }
 
-        // System.out.println("Invalid username or password.");
+        System.out.println("Invalid username or password.");
 
-        // System.out.print("Try again? (yes/no): ");
-        // String retry = scanner.nextLine();
-        // String retryLowerCase = retry.toLowerCase();
-        // if (retryLowerCase.compareTo("yes") == 0 || retryLowerCase.compareTo("y") == 0) {
-        //     return Login();
-        // }
+        System.out.print("Try again? (yes/no): ");
+        String retry = scanner.nextLine();
+        String retryLowerCase = retry.toLowerCase();
+        if (retryLowerCase.compareTo("yes") == 0 || retryLowerCase.compareTo("y") == 0) {
+            return Login();
+        }
 
-        // return null;
-        
-        User user = new Customer(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Customer");
-        return user;
+        return null;
+
     }
 }
