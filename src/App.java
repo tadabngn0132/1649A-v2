@@ -152,9 +152,8 @@ public class App {
                     System.out.print("Enter shipping address: ");
                     String shippingAddress = scanner1.nextLine();
                     
-                    int nextOrderId = 1;
                     // Tạo đơn hàng mới
-                    Order newOrder = new Order(nextOrderId++, customer.getFullName(), shippingAddress);
+                    Order newOrder = new Order(OrderManager.getNextOrderId(), customer.getFullName(), shippingAddress);
                     newOrder.setBooks(new ArrayList<>(customer.getCart().getItems()));
                     
                     // Thêm đơn hàng vào hệ thống
@@ -623,6 +622,8 @@ public class App {
         }
 
         return null;
-
+        
+        // User user = new Customer(0, "Nguyen Ba Dat", "btad", "1234", "datngba2310@gmail.com", "Customer");
+        // return user;
     }
 }

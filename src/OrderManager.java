@@ -6,6 +6,10 @@ public class OrderManager {
     private static LinkedListBasedQueue<Order> completedOrders;
     private static ArrayList<Order> allOrders;
     private static int nextOrderId = 1;
+
+    public static int getNextOrderId() {
+        return nextOrderId++;
+    }
     
     // Lấy danh sách đơn hàng đang chờ xử lý
     public static LinkedListBasedQueue<Order> getPendingOrders() {
@@ -15,8 +19,6 @@ public class OrderManager {
             completedOrders = new LinkedListBasedQueue<>();
             allOrders = new ArrayList<>();
             
-            // Thêm một số đơn hàng mẫu
-            createSampleOrders();
         }
         return pendingOrders;
     }
@@ -43,16 +45,6 @@ public class OrderManager {
             getPendingOrders(); // Đảm bảo khởi tạo tất cả các queue
         }
         return allOrders;
-    }
-    
-    // Tạo đơn hàng mới
-    public static Order createOrder(String customerName, String shippingAddress, ArrayList<Book> books) {
-        Order newOrder = new Order(nextOrderId++, customerName, shippingAddress);
-        newOrder.setBooks(new ArrayList<>(books)); // Tạo bản sao của danh sách sách
-        newOrder.setStatus("Pending");
-        pendingOrders.enqueue(newOrder);
-        allOrders.add(newOrder);
-        return newOrder;
     }
     
     // Chuyển đơn hàng từ trạng thái Pending sang Processing
@@ -211,61 +203,6 @@ public class OrderManager {
             return true;
         }
         return false;
-    }
-    
-    // Tạo đơn hàng mẫu
-    private static void createSampleOrders() {
-        ArrayList<Book> books = BookManager.getBooks();
-        
-        if (pendingOrders == null) {
-            pendingOrders = new LinkedListBasedQueue<>();
-        }
-        if (processingOrders == null) {
-            processingOrders = new LinkedListBasedQueue<>();
-        }
-        if (completedOrders == null) {
-            completedOrders = new LinkedListBasedQueue<>();
-        }
-        if (allOrders == null) {
-            allOrders = new ArrayList<>();
-        }
-        
-        // Đơn hàng 1 - Pending
-        Order order1 = new Order(nextOrderId++, "Nguyen Van X", "123 ABC Street, District 1, HCMC");
-        ArrayList<Book> books1 = new ArrayList<>();
-        books1.add(new Book(books.get(0).getId(), books.get(0).getTitle(), books.get(0).getAuthor(), 
-                        books.get(0).getPrice(), 2)); // The Great Gatsby x 2
-        books1.add(new Book(books.get(8).getId(), books.get(8).getTitle(), books.get(8).getAuthor(), 
-                        books.get(8).getPrice(), 1)); // The Hobbit x 1
-        order1.setBooks(books1);
-        pendingOrders.enqueue(order1);
-        allOrders.add(order1);
-        
-        // Đơn hàng 2 - Processing
-        Order order2 = new Order(nextOrderId++, "Tran Thi Y", "456 XYZ Street, District 2, HCMC");
-        ArrayList<Book> books2 = new ArrayList<>();
-        books2.add(new Book(books.get(1).getId(), books.get(1).getTitle(), books.get(1).getAuthor(), 
-                        books.get(1).getPrice(), 1)); // The Silmarillion x 1
-        books2.add(new Book(books.get(3).getId(), books.get(3).getTitle(), books.get(3).getAuthor(), 
-                        books.get(3).getPrice(), 3)); // Pride and Prejudice x 3
-        books2.add(new Book(books.get(4).getId(), books.get(4).getTitle(), books.get(4).getAuthor(), 
-                        books.get(4).getPrice(), 1)); // The Hobbit x 1
-        order2.setBooks(books2);
-        order2.setStatus("Processing");
-        processingOrders.enqueue(order2);
-        allOrders.add(order2);
-        
-        // Đơn hàng 3 - Completed
-        Order order3 = new Order(nextOrderId++, "Le Van Z", "789 DEF Street, District 3, HCMC");
-        ArrayList<Book> books3 = new ArrayList<>();
-        books3.add(new Book(books.get(0).getId(), books.get(0).getTitle(), books.get(0).getAuthor(), 
-                        books.get(0).getPrice(), 1)); // The Great Gatsby x 1
-        books3.add(new Book(books.get(4).getId(), books.get(4).getTitle(), books.get(4).getAuthor(), 
-                        books.get(4).getPrice(), 2)); // The Hobbit x 2
-        order3.setBooks(books3);
-        order3.setStatus("Completed");
-        completedOrders.enqueue(order3);
-        allOrders.add(order3);
     }
     
     // Tính tổng doanh thu của các đơn hàng đã hoàn thành
