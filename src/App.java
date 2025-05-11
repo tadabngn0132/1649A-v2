@@ -67,15 +67,16 @@ public class App {
                         @SuppressWarnings("resource")
                         Scanner scanner1 = new Scanner(System.in);
                         ArrayList<Book> availableBooks = BookManager.getBooks();
+                        sortedBooks = sorter.sortById(availableBooks, true);
                         
-                        if (availableBooks != null && !availableBooks.isEmpty()) {
-                            customer.Print(availableBooks);
+                        if (sortedBooks != null && !sortedBooks.isEmpty()) {
+                            customer.Print(sortedBooks);
                         } else {
                             System.out.println("There are no books to display.");
                         }
 
                         System.out.println();
-                        System.out.print("Enter book title to add to cart: ");
+                        System.out.print("Enter book ID to add to cart: ");
                         int bookId = scanner.nextInt();
 
                         if (bookId <= 0) {
@@ -400,7 +401,6 @@ public class App {
                     break;
 
                 case 3:
-                    // Implement order processing here
                     orderProcessingMenu(admin);
                     break;
 

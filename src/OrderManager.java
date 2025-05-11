@@ -94,70 +94,6 @@ public class OrderManager {
         return customerOrders;
     }
     
-    // Sắp xếp sách trong đơn hàng theo tiêu đề
-    public static void sortBooksByTitle(Order order, boolean ascending) {
-        InsertionSort sorter = new InsertionSort();
-        ArrayList<Book> sortedBooks = sorter.sortByTitle(order.getBooks(), ascending);
-        order.setBooks(sortedBooks);
-    }
-    
-    // Sắp xếp sách trong đơn hàng theo giá
-    public static void sortBooksByPrice(Order order, boolean ascending) {
-        InsertionSort sorter = new InsertionSort();
-        ArrayList<Book> sortedBooks = sorter.sortByPrice(order.getBooks(), ascending);
-        order.setBooks(sortedBooks);
-    }
-    
-    // Cập nhật trạng thái đơn hàng theo ID
-    public static boolean updateOrderStatus(int orderId, String status) {
-        Order order = findOrderById(orderId);
-        if (order != null) {
-            String oldStatus = order.getStatus();
-            order.setStatus(status);
-            
-            // Cập nhật queue tương ứng
-            if (oldStatus.equals("Pending") && !status.equals("Pending")) {
-                // Xóa khỏi pending queue
-                LinkedListBasedQueue<Order> tempQueue = new LinkedListBasedQueue<>();
-                while (!pendingOrders.isEmpty()) {
-                    Order tempOrder = pendingOrders.dequeue();
-                    if (tempOrder.getId() != orderId) {
-                        tempQueue.enqueue(tempOrder);
-                    }
-                }
-                while (!tempQueue.isEmpty()) {
-                    pendingOrders.enqueue(tempQueue.dequeue());
-                }
-            }
-            
-            if (oldStatus.equals("Processing") && !status.equals("Processing")) {
-                // Xóa khỏi processing queue
-                LinkedListBasedQueue<Order> tempQueue = new LinkedListBasedQueue<>();
-                while (!processingOrders.isEmpty()) {
-                    Order tempOrder = processingOrders.dequeue();
-                    if (tempOrder.getId() != orderId) {
-                        tempQueue.enqueue(tempOrder);
-                    }
-                }
-                while (!tempQueue.isEmpty()) {
-                    processingOrders.enqueue(tempQueue.dequeue());
-                }
-            }
-            
-            // Thêm vào queue mới
-            if (status.equals("Processing")) {
-                processingOrders.enqueue(order);
-            } else if (status.equals("Completed")) {
-                completedOrders.enqueue(order);
-            } else if (status.equals("Pending")) {
-                pendingOrders.enqueue(order);
-            }
-            
-            return true;
-        }
-        return false;
-    }
-    
     // Hủy đơn hàng
     public static boolean cancelOrder(int orderId) {
         Order order = findOrderById(orderId);
@@ -203,29 +139,5 @@ public class OrderManager {
             return true;
         }
         return false;
-    }
-    
-    // Tính tổng doanh thu của các đơn hàng đã hoàn thành
-    public static double calculateTotalRevenue() {
-        double totalRevenue = 0;
-        for (Order order : allOrders) {
-            if (order.getStatus().equals("Completed")) {
-                for (Book book : order.getBooks()) {
-                    totalRevenue += book.getPrice() * book.getQuantity();
-                }
-            }
-        }
-        return totalRevenue;
-    }
-    
-    // Đếm số lượng đơn hàng theo trạng thái
-    public static int countOrdersByStatus(String status) {
-        int count = 0;
-        for (Order order : allOrders) {
-            if (order.getStatus().equals(status)) {
-                count++;
-            }
-        }
-        return count;
     }
 }
